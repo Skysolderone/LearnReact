@@ -1,6 +1,9 @@
 //组件通信
 
 import { createContext, useContext, useEffect, useState } from "react"
+import { useSelector, useDispatch } from "react-redux"
+import { increment, descrement, atn } from "./store/modules/counterStore"
+import { fetchData } from "./store/modules/channleStore"
 //组件之间通信  使用状体提升 即通过同样的父组件进行通信
 //父组件传递子组件  使用props
 function Son(props) {
@@ -36,15 +39,30 @@ export default function App() {
   }
   const conMsg = 'this app transprt'
   const [list, setList] = useState([])
+  // useEffect(() => {
+  //   async function getList() {
+  //     const res = await fetch(Url)
+  //     const jsonres = await res.json()
+  //     // console.log(list)
+  //     setList(jsonres.data.channels)
+  //   }
+  //   getList()
+  // }, [])
+  //useEffort 异步请求
+  const dispatch = useDispatch()
   useEffect(() => {
-    async function getList() {
-      const res = await fetch(Url)
-      const jsonres = await res.json()
-      // console.log(list)
-      setList(jsonres.data.channels)
-    }
-    getList()
-  }, [])
+    dispatch(fetchData())
+  }, [dispatch])
+  //reducer
+  const { count } = useSelector(state => state.counter)
+  const { channel } = useSelector((state) => state.channel)
+
+
+
+  // if (!Array.isArray(channels)) {
+  //   console.log('data is not an array');
+  // }
+
   return (
     <div>
       this is app,{msg}
@@ -60,8 +78,21 @@ export default function App() {
       <br></br>
       {/* useEffort */}
       <ul>{list.map(item => (<li key={item.id}>{item.name}</li>))}</ul>
-    </div>
+      <br></br>
+      {/* reducer */}
+      <button onClick={() => dispatch(descrement())}>-</button>
+      {count}
+      <button onClick={() => dispatch(increment())}>+</button>
+      <button onClick={() => dispatch(atn(10))}>add10</button>
+      <button onClick={() => dispatch(atn(20))}>add20</button>
+      <br></br>
+      channle reducer
+
+      <ul>{channel.map(item => (<li key={item.id}>{item.name}</li>))}</ul>
+      <ul>{channel.map(item => (<li key={item.id}>{item.name}</li>))}</ul>
+    </div >
     //自定义hook
+
 
   )
 }
